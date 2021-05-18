@@ -10,9 +10,9 @@ public class Booster : MonoBehaviour
 {
     #region PRIVATE VARIABLES
 
-    protected Rigidbody _body;
+    private IWind _wind;
 
-    [SerializeField] private BoosterData _data;
+    [SerializeField] private BoosterData _myData;
 
     [SerializeField] private ParticleSystem _smoke01;
 
@@ -21,12 +21,28 @@ public class Booster : MonoBehaviour
     [SerializeField] private ParticleSystem _fire;
     #endregion
 
+    #region PROTECTED VARIABLES
+
+    protected Rigidbody _myBody;
+
+    protected AudioSource _myAudioSource;
+    #endregion
+
     #region UNITY METHODS
 
     public virtual void Awake()
     {
-        _body = GetComponent<Rigidbody>();
-    } 
+        _myBody = GetComponent<Rigidbody>();
+
+        _myAudioSource = GetComponent<AudioSource>();
+
+        _wind = DataFactory.GetWindController(_myBody);
+    }
+
+    private void FixedUpdate()
+    {
+        _wind.Apply();
+    }
     #endregion
 
     #region OWN METHOS
@@ -66,6 +82,7 @@ public class Booster : MonoBehaviour
     public void TriggerFire()
     {
         _fire.Play();
+        _myAudioSource.Play();
     }
 
     /// <summary>
@@ -74,6 +91,7 @@ public class Booster : MonoBehaviour
     public void StopFire()
     {
         _fire.Stop();
+        _myAudioSource.Stop();
     }
     #endregion
 
@@ -94,13 +112,13 @@ public class Booster : MonoBehaviour
         {
             time += Time.deltaTime;
 
-            if(time < _data.PropulsionTime)
+            if(time < _myData.PropulsionTime)
             {
-                if(force < _data.PropulsionPower)
+                if(force < _myData.PropulsionPower)
                 {
-                    force += Time.deltaTime * _data.PropulsionAceleration;
+                    force += Time.deltaTime * _myData.PropulsionAceleration;
                 }
-                _body.AddForce(_body.transform.forward * force, ForceMode.Acceleration);
+                _myBody.AddForce(_myBody.transform.forward * force, ForceMode.Acceleration);
             }
             else
             {

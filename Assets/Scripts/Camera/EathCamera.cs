@@ -1,7 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections; 
 using UnityEngine;
 
+/// <summary>
+/// Script responsável por controlar movimento da camera.
+/// </summary>
 public class EathCamera : MonoBehaviour
 {
     #region PRIVATE VARIABLES

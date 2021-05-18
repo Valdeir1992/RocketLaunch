@@ -10,7 +10,7 @@ public sealed class SecondStage : Booster, ISubject<Stage>, IObserver<Stage>
 
     private List<IObserver<Stage>> _observer = new List<IObserver<Stage>>();
 
-    [SerializeField] private Transform _paraChute;
+    [SerializeField] private Transform _centerOfMass;
     #endregion
 
     #region UNITY METHODS
@@ -25,12 +25,14 @@ public sealed class SecondStage : Booster, ISubject<Stage>, IObserver<Stage>
     }
 
     public override void Awake()
-    {
+    { 
         base.Awake();
 
         StopSmoke();
 
         StopFire();
+
+        _myBody.centerOfMass = _centerOfMass.localPosition;
     }
 
     private void OnDisable()
@@ -50,7 +52,7 @@ public sealed class SecondStage : Booster, ISubject<Stage>, IObserver<Stage>
         StartCoroutine(FallCheck());
 
         base.Callback();
-    }
+    } 
     #endregion
 
     #region PATTERN OBSERVER
@@ -66,8 +68,6 @@ public sealed class SecondStage : Booster, ISubject<Stage>, IObserver<Stage>
     public void Register(IObserver<Stage> observer)
     {
         _observer.Add(observer);
-
-        Debug.Log(observer.GetType());
     }
 
     public void Remove(IObserver<Stage> observer)
@@ -98,10 +98,13 @@ public sealed class SecondStage : Booster, ISubject<Stage>, IObserver<Stage>
     /// </summary>
     /// <returns></returns>
     private IEnumerator FallCheck()
-    {    
-        yield return new WaitUntil(() => _body.velocity.y <= 0); 
+    { 
 
+        yield return new WaitUntil(() => _myBody.velocity.y <= 0); 
+        
         NotifyAll(Stage.STAGE_TWO_COMPLETED);
+
+        _myBody.drag = 5;
 
         yield break;
     }

@@ -29,7 +29,7 @@ public sealed class FirstStage : Booster, ISubject<Stage>
         Destroy(GetComponent<FixedJoint>());
 
         base.Callback();
-    }
+    } 
     #endregion
 
     #region PATTERN OBSERVER
